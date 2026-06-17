@@ -11,10 +11,12 @@ signal room_cleared
 @export var spawner_path: NodePath = ^"../EnemySpawner"
 @export var enemy_parent_path: NodePath = ^".."
 @export var autostart: bool = true
+@export var clear_spawned_on_start: bool = true
 
 var _spawner: EnemySpawner
 var _enemy_parent: Node
 var _alive_enemies: Array[Node] = []
+var _spawned_enemies: Array[Node] = []
 var _current_wave_index: int = -1
 var _is_running: bool = false
 var _is_room_cleared: bool = false
@@ -32,11 +34,22 @@ func start() -> void:
 	if _is_running:
 		return
 
+	if clear_spawned_on_start:
+		clear_spawned_enemies()
+
 	_is_running = true
 	_is_room_cleared = false
 	_current_wave_index = -1
-	_alive_enemies.clear()
 	_start_next_wave()
+
+
+func clear_spawned_enemies() -> void:
+	for enemy: Node in _spawned_enemies:
+		if is_instance_valid(enemy):
+			enemy.queue_free()
+
+	_spawned_enemies.clear()
+	_alive_enemies.clear()
 
 
 func _start_next_wave() -> void:
@@ -86,6 +99,7 @@ func _track_enemy(enemy: Node) -> void:
 	if enemy == null:
 		return
 
+	_spawned_enemies.append(enemy)
 	var enemy_base: EnemyBase = enemy as EnemyBase
 	if enemy_base != null:
 		_alive_enemies.append(enemy_base)

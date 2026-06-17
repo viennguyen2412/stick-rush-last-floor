@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://cxeujvits1u3y"]
+[gd_scene load_steps=19 format=3 uid="uid://cxeujvits1u3y"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/combat/DebugHitTarget.tscn" id="2_debug_hit_target"]
@@ -12,6 +12,7 @@
 [ext_resource type="Script" path="res://scripts/enemies/enemy_spawner.gd" id="10_enemy_spawner"]
 [ext_resource type="Script" path="res://scripts/core/wave_manager.gd" id="11_wave_manager"]
 [ext_resource type="Script" path="res://scripts/data/wave_data.gd" id="12_wave_data"]
+[ext_resource type="Script" path="res://scripts/core/run_manager.gd" id="13_run_manager"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(800, 32)
@@ -48,6 +49,10 @@ script = ExtResource("10_enemy_spawner")
 [node name="WaveManager" type="Node" parent="."]
 script = ExtResource("11_wave_manager")
 waves = Array[Resource]([SubResource("Resource_wave_1"), SubResource("Resource_wave_2"), SubResource("Resource_wave_3")])
+autostart = false
+
+[node name="RunManager" type="Node" parent="."]
+script = ExtResource("13_run_manager")
 
 [node name="Floor" type="StaticBody2D" parent="." unique_id=74871838]
 position = Vector2(0, 300)
