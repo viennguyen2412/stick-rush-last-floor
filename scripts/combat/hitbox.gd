@@ -10,7 +10,6 @@ signal hit(target: Hurtbox, damage_packet: DamagePacket)
 
 var _hit_targets: Array[Hurtbox] = []
 var _was_monitoring: bool = false
-var _is_hit_consumed: bool = false
 
 
 func _ready() -> void:
@@ -38,7 +37,6 @@ func _on_area_entered(area: Area2D) -> void:
 func _update_activation_state() -> void:
 	if monitoring and not _was_monitoring:
 		_hit_targets.clear()
-		_is_hit_consumed = false
 
 	_was_monitoring = monitoring
 
@@ -50,32 +48,25 @@ func _check_current_overlaps() -> void:
 			continue
 
 		_try_hit(hurtbox)
-		if _is_hit_consumed:
-			return
 
 
 func _try_hit(hurtbox: Hurtbox) -> void:
-	if _is_hit_consumed:
-		return
-
 	if _hit_targets.has(hurtbox):
 		return
 
-	if team == hurtbox.team:
+	if damage_packet == null:
 		return
 
-	_is_hit_consumed = true
+	if _get_attack_team(damage_packet) == hurtbox.team:
+		return
+
 	_hit_targets.append(hurtbox)
 	hurtbox.receive_hit(self, damage_packet)
 	hit.emit(hurtbox, damage_packet)
-	_disable_after_hit()
 
 
-func _disable_after_hit() -> void:
-	set_deferred("monitoring", false)
-	visible = false
+func _get_attack_team(packet: DamagePacket) -> int:
+	if packet.team != 0:
+		return packet.team
 
-	for child: Node in get_children():
-		var collision_shape: CollisionShape2D = child as CollisionShape2D
-		if collision_shape != null:
-			collision_shape.set_deferred("disabled", true)
+	return team
