@@ -7,6 +7,7 @@ signal hit(target: Hurtbox, damage_packet: DamagePacket)
 
 @export var damage_packet: DamagePacket = null
 @export var team: int = 1
+@export var clear_targets_when_no_overlaps: bool = false
 
 var _hit_targets: Array[Hurtbox] = []
 var _was_monitoring: bool = false
@@ -42,12 +43,17 @@ func _update_activation_state() -> void:
 
 
 func _check_current_overlaps() -> void:
+	var has_hurtbox_overlap: bool = false
 	for area: Area2D in get_overlapping_areas():
 		var hurtbox: Hurtbox = area as Hurtbox
 		if hurtbox == null:
 			continue
 
+		has_hurtbox_overlap = true
 		_try_hit(hurtbox)
+
+	if clear_targets_when_no_overlaps and not has_hurtbox_overlap:
+		_hit_targets.clear()
 
 
 func _try_hit(hurtbox: Hurtbox) -> void:

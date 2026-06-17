@@ -21,6 +21,7 @@ enum ParryPhase {
 
 
 @export var hitbox_path: NodePath = ^"../VisualRoot/Hitbox"
+@export var health_path: NodePath = ^"../Health"
 @export var combo_timeout: float = 0.5
 @export var parry_window_duration: float = 0.15
 @export var parry_recovery_duration: float = 0.3
@@ -44,6 +45,7 @@ var _hitbox: Area2D
 var _hitbox_shape: CollisionShape2D
 var _hitbox_rectangle: RectangleShape2D
 var _debug_visual: Polygon2D
+var _health: HealthComponent
 var _attack_hitbox_color: Color = Color(1.0, 0.22, 0.12, 0.48)
 var _phase: ComboPhase = ComboPhase.IDLE
 var _current_hit: int = 0
@@ -52,9 +54,14 @@ var _combo_time_left: float = 0.0
 var _queued_next_hit: bool = false
 var _parry_phase: ParryPhase = ParryPhase.IDLE
 var _parry_time_left: float = 0.0
+var _is_dead: bool = false
 
 
 func _ready() -> void:
+	_health = get_node_or_null(health_path) as HealthComponent
+	if _health != null:
+		_health.died.connect(_on_died)
+
 	_hitbox = get_node_or_null(hitbox_path) as Area2D
 	if _hitbox == null:
 		return
@@ -74,6 +81,9 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if _is_dead:
+		return
+
 	_handle_parry_input()
 	_handle_attack_input()
 	_update_combo(delta)
@@ -359,3 +369,9 @@ func _get_hitbox_offset(hit_number: int) -> Vector2:
 			return hit_3_hitbox_offset
 		_:
 			return hit_1_hitbox_offset
+
+
+func _on_died() -> void:
+	_is_dead = true
+	_reset_combo()
+	_finish_failed_parry()

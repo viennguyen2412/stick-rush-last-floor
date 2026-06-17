@@ -7,15 +7,27 @@ extends CharacterBody2D
 @export var jump_velocity: float = 420.0
 @export var gravity: float = 1200.0
 @export var visual_root_path: NodePath = ^"VisualRoot"
+@export var health_path: NodePath = ^"Health"
 
 var _visual_root: Node2D
+var _health: HealthComponent
+var _is_dead: bool = false
 
 
 func _ready() -> void:
 	_visual_root = get_node_or_null(visual_root_path) as Node2D
+	_health = get_node_or_null(health_path) as HealthComponent
+	if _health != null:
+		_health.died.connect(_on_died)
 
 
 func _physics_process(delta: float) -> void:
+	if _is_dead:
+		_apply_gravity(delta)
+		velocity.x = move_toward(velocity.x, 0.0, acceleration * delta)
+		move_and_slide()
+		return
+
 	_apply_gravity(delta)
 	_handle_jump()
 	_handle_horizontal_movement(delta)
@@ -54,3 +66,8 @@ func _set_facing(direction: float) -> void:
 
 	visual_scale.x = base_scale_x if direction > 0.0 else -base_scale_x
 	_visual_root.scale = visual_scale
+
+
+func _on_died() -> void:
+	_is_dead = true
+	velocity = Vector2.ZERO

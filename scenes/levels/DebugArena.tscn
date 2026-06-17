@@ -1,7 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://cxeujvits1u3y"]
+[gd_scene load_steps=7 format=3 uid="uid://cxeujvits1u3y"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/combat/DebugHitTarget.tscn" id="2_debug_hit_target"]
+[ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="3_hud"]
+[ext_resource type="PackedScene" path="res://scenes/combat/DebugDamageZone.tscn" id="4_debug_damage_zone"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(800, 32)
@@ -50,5 +52,13 @@ position = Vector2(0, 284)
 [node name="EnemyDebugTarget" parent="." instance=ExtResource("2_debug_hit_target")]
 position = Vector2(64, 284)
 
+[node name="PlayerDamageZone" parent="." instance=ExtResource("4_debug_damage_zone")]
+position = Vector2(-96, 258)
+
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1455151369]
 position = Vector2(0, 140)
+
+[node name="HUDLayer" type="CanvasLayer" parent="."]
+
+[node name="HUD" parent="HUDLayer" instance=ExtResource("3_hud")]
+player_health_path = NodePath("../../Player/Health")
