@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://cxeujvits1u3y"]
+[gd_scene load_steps=20 format=3 uid="uid://cxeujvits1u3y"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/combat/DebugHitTarget.tscn" id="2_debug_hit_target"]
@@ -13,6 +13,7 @@
 [ext_resource type="Script" path="res://scripts/core/wave_manager.gd" id="11_wave_manager"]
 [ext_resource type="Script" path="res://scripts/data/wave_data.gd" id="12_wave_data"]
 [ext_resource type="Script" path="res://scripts/core/run_manager.gd" id="13_run_manager"]
+[ext_resource type="PackedScene" path="res://scenes/ui/RunResultOverlay.tscn" id="14_run_result_overlay"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(800, 32)
@@ -118,3 +119,5 @@ script = ExtResource("6_camera_shake")
 
 [node name="HUD" parent="HUDLayer" instance=ExtResource("3_hud")]
 player_health_path = NodePath("../../Player/Health")
+
+[node name="RunResultOverlay" parent="HUDLayer" instance=ExtResource("14_run_result_overlay")]

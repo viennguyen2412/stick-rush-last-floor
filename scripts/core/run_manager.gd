@@ -7,6 +7,7 @@ signal room_started(room_index: int, room_count: int)
 signal room_cleared(room_index: int)
 signal reward_started(room_index: int)
 signal reward_completed(room_index: int)
+signal run_lost
 signal run_won
 
 
@@ -22,6 +23,7 @@ signal run_won
 var _wave_manager: WaveManager
 var _player: Node2D
 var _player_spawn: Node2D
+var _player_health: HealthComponent
 var _current_room_index: int = -1
 var _is_run_active: bool = false
 var _is_reward_active: bool = false
@@ -32,9 +34,14 @@ func _ready() -> void:
 	_wave_manager = get_node_or_null(wave_manager_path) as WaveManager
 	_player = get_node_or_null(player_path) as Node2D
 	_player_spawn = get_node_or_null(player_spawn_path) as Node2D
+	if _player != null:
+		_player_health = _player.get_node_or_null("Health") as HealthComponent
 
 	if _wave_manager != null:
 		_wave_manager.room_cleared.connect(_on_wave_room_cleared)
+
+	if _player_health != null:
+		_player_health.died.connect(_on_player_died)
 
 	if autostart:
 		call_deferred("start_run")
@@ -110,6 +117,16 @@ func _finish_run() -> void:
 	_is_reward_active = false
 	_reward_time_left = 0.0
 	run_won.emit()
+
+
+func _on_player_died() -> void:
+	if not _is_run_active:
+		return
+
+	_is_run_active = false
+	_is_reward_active = false
+	_reward_time_left = 0.0
+	run_lost.emit()
 
 
 func _is_final_room() -> bool:
