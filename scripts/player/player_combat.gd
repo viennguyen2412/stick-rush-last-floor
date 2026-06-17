@@ -40,12 +40,16 @@ enum ParryPhase {
 @export var hit_1_hitbox_offset: Vector2 = Vector2(34.0, -29.0)
 @export var hit_2_hitbox_offset: Vector2 = Vector2(38.0, -29.0)
 @export var hit_3_hitbox_offset: Vector2 = Vector2(44.0, -30.0)
+@export var hit_1_guard_damage: float = 1.0
+@export var hit_2_guard_damage: float = 1.0
+@export var hit_3_guard_damage: float = 3.0
 
-var _hitbox: Area2D
+var _hitbox: Hitbox
 var _hitbox_shape: CollisionShape2D
 var _hitbox_rectangle: RectangleShape2D
 var _debug_visual: Polygon2D
 var _health: HealthComponent
+var _damage_packet: DamagePacket
 var _attack_hitbox_color: Color = Color(1.0, 0.22, 0.12, 0.48)
 var _phase: ComboPhase = ComboPhase.IDLE
 var _current_hit: int = 0
@@ -62,9 +66,13 @@ func _ready() -> void:
 	if _health != null:
 		_health.died.connect(_on_died)
 
-	_hitbox = get_node_or_null(hitbox_path) as Area2D
+	_hitbox = get_node_or_null(hitbox_path) as Hitbox
 	if _hitbox == null:
 		return
+
+	if _hitbox.damage_packet != null:
+		_damage_packet = _hitbox.damage_packet.duplicate() as DamagePacket
+		_hitbox.damage_packet = _damage_packet
 
 	_hitbox_shape = _hitbox.get_node_or_null("CollisionShape2D") as CollisionShape2D
 	_debug_visual = _hitbox.get_node_or_null("DebugVisual") as Polygon2D
@@ -264,6 +272,17 @@ func _configure_hitbox(hit_number: int) -> void:
 		_debug_visual.color = _attack_hitbox_color
 		_set_debug_visual_size(hitbox_size)
 
+	_configure_damage_packet(hit_number)
+
+
+func _configure_damage_packet(hit_number: int) -> void:
+	if _damage_packet == null:
+		return
+
+	# MVP heavy attack: the third combo hit is the guard-breaking finisher.
+	_damage_packet.is_heavy = hit_number == 3
+	_damage_packet.guard_damage = _get_guard_damage(hit_number)
+
 
 func _configure_parry_feedback(is_recovery: bool) -> void:
 	if _hitbox == null:
@@ -369,6 +388,18 @@ func _get_hitbox_offset(hit_number: int) -> Vector2:
 			return hit_3_hitbox_offset
 		_:
 			return hit_1_hitbox_offset
+
+
+func _get_guard_damage(hit_number: int) -> float:
+	match hit_number:
+		1:
+			return hit_1_guard_damage
+		2:
+			return hit_2_guard_damage
+		3:
+			return hit_3_guard_damage
+		_:
+			return hit_1_guard_damage
 
 
 func _on_died() -> void:

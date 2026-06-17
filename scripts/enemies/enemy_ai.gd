@@ -7,6 +7,7 @@ enum State {
 	WINDUP,
 	ATTACK,
 	RECOVERY,
+	STAGGER,
 	DEAD,
 }
 
@@ -75,6 +76,9 @@ func _physics_process(delta: float) -> void:
 			_update_timed_state(delta)
 			_stop_movement(delta)
 		State.RECOVERY:
+			_update_timed_state(delta)
+			_stop_movement(delta)
+		State.STAGGER:
 			_update_timed_state(delta)
 			_stop_movement(delta)
 		_:
@@ -151,6 +155,16 @@ func _start_attack() -> void:
 func _start_recovery() -> void:
 	_state = State.RECOVERY
 	_state_time_left = maxf(recovery_duration, 0.0)
+	_set_attack_hitbox_active(false)
+	_set_telegraph_visible(false)
+
+
+func stagger(duration: float) -> void:
+	if _state == State.DEAD:
+		return
+
+	_state = State.STAGGER
+	_state_time_left = maxf(duration, 0.0)
 	_set_attack_hitbox_active(false)
 	_set_telegraph_visible(false)
 

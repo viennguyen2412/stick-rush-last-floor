@@ -1,0 +1,75 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_base.gd" id="1_enemy_base"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_ai.gd" id="2_enemy_ai"]
+[ext_resource type="PackedScene" path="res://scenes/combat/Hurtbox.tscn" id="3_hurtbox"]
+[ext_resource type="PackedScene" path="res://scenes/combat/Hitbox.tscn" id="4_hitbox"]
+[ext_resource type="Script" path="res://scripts/combat/health_component.gd" id="5_health"]
+[ext_resource type="Script" path="res://scripts/combat/damage_feedback_component.gd" id="6_damage_feedback"]
+[ext_resource type="Script" path="res://scripts/combat/damage_packet.gd" id="7_damage_packet"]
+[ext_resource type="Script" path="res://scripts/enemies/shield_hurtbox.gd" id="8_shield_hurtbox"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(30, 54)
+
+[sub_resource type="Resource" id="Resource_shield_attack_packet"]
+script = ExtResource("7_damage_packet")
+damage = 10.0
+knockback = Vector2(145, -25)
+hitstop = 0.04
+stun = 0.12
+team = 2
+
+[node name="ShieldEnemy" type="CharacterBody2D"]
+script = ExtResource("1_enemy_base")
+
+[node name="VisualRoot" type="Node2D" parent="."]
+
+[node name="Body" type="Polygon2D" parent="VisualRoot"]
+color = Color(0.36, 0.38, 0.58, 1)
+polygon = PackedVector2Array(-12, -52, 10, -52, 12, 0, -12, 0)
+
+[node name="Shield" type="Polygon2D" parent="VisualRoot"]
+color = Color(0.88, 0.74, 0.28, 1)
+polygon = PackedVector2Array(8, -50, 23, -44, 23, -12, 8, -2)
+
+[node name="FacingMarker" type="Polygon2D" parent="VisualRoot"]
+color = Color(0.95, 1, 0.8, 1)
+polygon = PackedVector2Array(11, -36, 22, -28, 11, -20)
+
+[node name="WindupTelegraph" type="Polygon2D" parent="VisualRoot"]
+visible = false
+color = Color(1, 0.9, 0.1, 0.42)
+polygon = PackedVector2Array(20, -46, 46, -46, 46, -10, 20, -10)
+
+[node name="Hitbox" parent="VisualRoot" instance=ExtResource("4_hitbox")]
+position = Vector2(36, -28)
+damage_packet = SubResource("Resource_shield_attack_packet")
+team = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -27)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="Hurtbox" parent="." instance=ExtResource("3_hurtbox")]
+position = Vector2(0, -27)
+script = ExtResource("8_shield_hurtbox")
+team = 2
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("5_health")
+max_health = 50.0
+current_health = 50.0
+
+[node name="DamageFeedback" type="Node" parent="."]
+script = ExtResource("6_damage_feedback")
+position_knockback_scale = 0.06
+
+[node name="AI" type="Node" parent="."]
+script = ExtResource("2_enemy_ai")
+speed = 80.0
+attack_range = 50.0
+chase_stop_range = 32.0
+windup_duration = 0.34
+active_duration = 0.12
+recovery_duration = 0.52
