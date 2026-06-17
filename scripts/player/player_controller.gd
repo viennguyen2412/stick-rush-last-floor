@@ -71,3 +71,10 @@ func _set_facing(direction: float) -> void:
 func _on_died() -> void:
 	_is_dead = true
 	velocity = Vector2.ZERO
+
+
+func apply_external_impulse(impulse: Vector2) -> void:
+	if _is_dead:
+		return
+
+	velocity += impulse

@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/combat/debug_hit_target.gd" id="1_debug_hit_target"]
 [ext_resource type="PackedScene" path="res://scenes/combat/Hurtbox.tscn" id="2_hurtbox"]
 [ext_resource type="Script" path="res://scripts/combat/health_component.gd" id="3_health_component"]
+[ext_resource type="Script" path="res://scripts/combat/damage_feedback_component.gd" id="4_damage_feedback"]
 
 [node name="DebugHitTarget" type="Node2D"]
 script = ExtResource("1_debug_hit_target")
@@ -18,6 +19,10 @@ position = Vector2(0, -26)
 script = ExtResource("3_health_component")
 max_health = 30.0
 current_health = 30.0
+
+[node name="DamageFeedback" type="Node" parent="."]
+script = ExtResource("4_damage_feedback")
+position_knockback_scale = 0.06
 
 [node name="HitCountLabel" type="Label" parent="."]
 offset_left = -28.0
