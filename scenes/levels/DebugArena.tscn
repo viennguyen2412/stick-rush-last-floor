@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cxeujvits1u3y"]
+[gd_scene load_steps=10 format=3 uid="uid://cxeujvits1u3y"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/combat/DebugHitTarget.tscn" id="2_debug_hit_target"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/combat/DebugDamageZone.tscn" id="4_debug_damage_zone"]
 [ext_resource type="Script" path="res://scripts/combat/hitstop_manager.gd" id="5_hitstop_manager"]
 [ext_resource type="Script" path="res://scripts/combat/camera_shake_2d.gd" id="6_camera_shake"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/Grunt.tscn" id="7_grunt"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(800, 32)
@@ -56,6 +57,9 @@ position = Vector2(0, 284)
 
 [node name="EnemyDebugTarget" parent="." instance=ExtResource("2_debug_hit_target")]
 position = Vector2(56, 284)
+
+[node name="Grunt" parent="." instance=ExtResource("7_grunt")]
+position = Vector2(230, 284)
 
 [node name="PlayerDamageZone" parent="." instance=ExtResource("4_debug_damage_zone")]
 position = Vector2(-96, 258)

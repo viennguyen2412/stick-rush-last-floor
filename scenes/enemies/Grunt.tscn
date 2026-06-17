@@ -1,0 +1,63 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_base.gd" id="1_enemy_base"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_ai.gd" id="2_enemy_ai"]
+[ext_resource type="PackedScene" path="res://scenes/combat/Hurtbox.tscn" id="3_hurtbox"]
+[ext_resource type="PackedScene" path="res://scenes/combat/Hitbox.tscn" id="4_hitbox"]
+[ext_resource type="Script" path="res://scripts/combat/health_component.gd" id="5_health"]
+[ext_resource type="Script" path="res://scripts/combat/damage_feedback_component.gd" id="6_damage_feedback"]
+[ext_resource type="Script" path="res://scripts/combat/damage_packet.gd" id="7_damage_packet"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(28, 52)
+
+[sub_resource type="Resource" id="Resource_grunt_attack_packet"]
+script = ExtResource("7_damage_packet")
+damage = 12.0
+knockback = Vector2(150, -35)
+hitstop = 0.04
+stun = 0.12
+team = 2
+
+[node name="Grunt" type="CharacterBody2D"]
+script = ExtResource("1_enemy_base")
+
+[node name="VisualRoot" type="Node2D" parent="."]
+
+[node name="Body" type="Polygon2D" parent="VisualRoot"]
+color = Color(0.78, 0.18, 0.14, 1)
+polygon = PackedVector2Array(-12, -52, 12, -52, 12, 0, -12, 0)
+
+[node name="FacingMarker" type="Polygon2D" parent="VisualRoot"]
+color = Color(1, 0.85, 0.15, 1)
+polygon = PackedVector2Array(10, -36, 22, -28, 10, -20)
+
+[node name="WindupTelegraph" type="Polygon2D" parent="VisualRoot"]
+visible = false
+color = Color(1, 0.9, 0.1, 0.42)
+polygon = PackedVector2Array(18, -46, 42, -46, 42, -10, 18, -10)
+
+[node name="Hitbox" parent="VisualRoot" instance=ExtResource("4_hitbox")]
+position = Vector2(34, -28)
+damage_packet = SubResource("Resource_grunt_attack_packet")
+team = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -26)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="Hurtbox" parent="." instance=ExtResource("3_hurtbox")]
+position = Vector2(0, -26)
+team = 2
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("5_health")
+max_health = 36.0
+current_health = 36.0
+
+[node name="DamageFeedback" type="Node" parent="."]
+script = ExtResource("6_damage_feedback")
+position_knockback_scale = 0.08
+
+[node name="AI" type="Node" parent="."]
+script = ExtResource("2_enemy_ai")
